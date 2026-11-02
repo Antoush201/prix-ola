@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Tarifs OLA selon vos besoins.">
+<title>Tarifs OLA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+/* Mise en page : 2 questions numérotées (courtiers, numéros), puis un forfait détaillé qui se met à jour en direct. Branding ola-ai.ca. */
+:root{
+  --bg:#fafafa; --card:#f5f5f5; --white:#ffffff; --fg:#0a0a0a; --fg-2:#555555;
+  --fg-60:rgba(10,10,10,.6); --fg-40:rgba(10,10,10,.4); --fg-12:rgba(10,10,10,.12); --fg-05:rgba(10,10,10,.05);
+  --border:rgba(215,215,215,.6); --border-solid:#d7d7d7;
+  --sans:"Geist","Geist Fallback",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"Geist Mono","Geist Mono Fallback",ui-monospace,Menlo,monospace;
+  --ease:cubic-bezier(.22,1,.36,1);
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.wrap{max-width:780px;margin:0 auto;padding-inline:24px;padding-block:36px 64px;display:flex;flex-direction:column;gap:20px}
+
+/* En-tête */
+.top{display:flex;justify-content:center;padding-bottom:4px}
+.top img{height:52px;width:auto;display:block}
+.hero{display:flex;flex-direction:column;align-items:center;text-align:center;gap:16px;padding-bottom:12px}
+.pill-tag{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--border);background:var(--white);border-radius:999px;padding:6px 14px;font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase}
+.pill-tag i{width:6px;height:6px;border-radius:50%;background:var(--fg)}
+h1{margin:0;font-size:clamp(34px,6vw,52px);line-height:1.05;letter-spacing:-.03em;font-weight:600;text-wrap:balance}
+h1 span{display:block;color:var(--fg-2)}
+.lede{margin:0;font-size:17px;color:var(--fg-2)}
+
+/* Questions */
+.step{background:var(--white);border:1px solid var(--border);border-radius:20px;padding:24px 26px;display:flex;flex-direction:column;gap:18px}
+.step-head{display:flex;gap:14px;align-items:flex-start}
+.num{flex:none;width:30px;height:30px;border-radius:50%;background:var(--fg);color:var(--bg);font-family:var(--mono);font-size:13px;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.step-head h2{margin:0;font-size:20px;font-weight:600;letter-spacing:-.015em;line-height:1.3}
+.step-head p{margin:2px 0 0;font-size:14px;color:var(--fg-60)}
+.step-head .val{margin-left:auto;font-size:26px;font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums;white-space:nowrap}
+.step-head .val small{font-size:14px;font-weight:500;color:var(--fg-60);letter-spacing:0;margin-left:4px}
+
+/* Curseur */
+.range{--pct:0%;-webkit-appearance:none;appearance:none;width:100%;height:44px;background:transparent;cursor:pointer;margin:0;touch-action:pan-y}
+.range:focus{outline:none}
+.range::-webkit-slider-runnable-track{height:6px;border-radius:999px;background:linear-gradient(to right,var(--fg) var(--pct),var(--fg-12) var(--pct))}
+.range::-moz-range-track{height:6px;border-radius:999px;background:var(--fg-12)}
+.range::-moz-range-progress{height:6px;border-radius:999px;background:var(--fg)}
+.range::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:30px;height:30px;margin-top:-12px;border-radius:50%;background:var(--white);border:2px solid var(--fg);box-shadow:0 2px 10px rgba(10,10,10,.18);transition:transform .15s}
+.range::-moz-range-thumb{width:26px;height:26px;border-radius:50%;background:var(--white);border:2px solid var(--fg);box-shadow:0 2px 10px rgba(10,10,10,.18)}
+.range:active::-webkit-slider-thumb{transform:scale(1.12)}
+.range:focus-visible::-webkit-slider-thumb{outline:2px solid var(--fg);outline-offset:3px}
+.ticks{display:flex;justify-content:space-between;padding:0 11px;margin-top:-10px}
+.ticks button{font:inherit;font-family:var(--mono);font-size:12px;color:var(--fg-40);background:none;border:0;padding:6px 0;width:22px;text-align:center;cursor:pointer;transition:color .2s,transform .2s}
+.ticks button[aria-current="true"]{color:var(--fg);font-weight:500;transform:scale(1.15)}
+
+/* Compteur de numéros */
+.stepper{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.counter-box{display:inline-flex;align-items:center;gap:4px;background:var(--card);border:1px solid var(--border);border-radius:999px;padding:4px}
+.counter-box button{width:44px;height:44px;border-radius:50%;border:0;background:var(--white);color:var(--fg);font:inherit;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 2px rgba(10,10,10,.08)}
+.counter-box button:disabled{opacity:.3;cursor:default}
+.counter-box button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
+.counter-box output{min-width:44px;text-align:center;font-size:22px;font-weight:600;font-variant-numeric:tabular-nums}
+.stepper p{margin:0;font-size:14px;color:var(--fg-60);flex:1;min-width:200px}
+
+/* Bouton principal */
+.go{font:inherit;border:0;cursor:pointer;background:var(--fg);color:var(--bg);border-radius:999px;padding:16px 28px;font-size:16px;font-weight:500;min-height:54px;display:flex;align-items:center;justify-content:center;gap:10px;transition:opacity .15s}
+.go:hover{opacity:.88}
+.go:focus-visible{outline:2px solid var(--fg);outline-offset:3px}
+.go svg{width:16px;height:16px}
+
+/* Génération */
+.gen{background:var(--white);border:1px solid var(--border);border-radius:20px;padding:32px 28px;display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center;animation:rise .35s var(--ease)}
+.spin{width:36px;height:36px;border-radius:50%;border:2.5px solid var(--fg-12);border-top-color:var(--fg);animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.gen-title{margin:0;font-size:18px;font-weight:600;letter-spacing:-.01em}
+.gen-steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;align-self:center;text-align:left}
+.gen-steps li{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--fg-40);transition:color .25s}
+.gen-steps li .dotk{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--fg-12);display:flex;align-items:center;justify-content:center;flex:none;transition:all .25s}
+.gen-steps li .dotk svg{width:11px;height:11px;opacity:0;transition:opacity .2s}
+.gen-steps li.on{color:var(--fg)}
+.gen-steps li.done{color:var(--fg-60)}
+.gen-steps li.done .dotk{background:var(--fg);border-color:var(--fg);color:var(--bg)}
+.gen-steps li.done .dotk svg{opacity:1}
+.bar-track{width:100%;max-width:320px;height:4px;border-radius:999px;background:var(--fg-12);overflow:hidden}
+.bar-fill{height:100%;width:0;background:var(--fg);border-radius:999px;transition:width .3s linear}
+.v.pop,.line.total strong.pop{animation:pop .5s var(--ease)}
+@keyframes pop{0%{transform:scale(.92);opacity:.4}60%{transform:scale(1.05);opacity:1}100%{transform:scale(1)}}
+.v,.line.total strong{display:inline-block;transform-origin:left center}
+@media (prefers-reduced-motion:reduce){.spin{animation:none}.v.pop,.line.total strong.pop{animation:none}}
+
+/* Forfait détaillé */
+.quote{background:var(--white);border:1px solid var(--border);border-radius:20px;padding:32px;display:flex;flex-direction:column;gap:24px;scroll-margin-top:16px;
+  animation:rise .45s var(--ease)}
+@keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.q-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;padding-bottom:20px;border-bottom:1px solid var(--border-solid)}
+.q-head h2{margin:8px 0 0;font-size:28px;font-weight:600;letter-spacing:-.025em}
+.q-meta{font-family:var(--mono);font-size:12px;color:var(--fg-60);text-align:right;line-height:1.7}
+.q-label{font-size:12px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--fg-40);margin:0 0 6px}
+.lines{display:flex;flex-direction:column}
+.line{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:12px 0;border-bottom:1px solid var(--border)}
+.line span{font-size:15px}
+.line span em{display:block;font-style:normal;font-size:13px;color:var(--fg-60);margin-top:2px}
+.line strong{font-weight:500;font-variant-numeric:tabular-nums;white-space:nowrap}
+.line.total{border-bottom:0;padding-top:16px}
+.line.total span{font-weight:600}
+.line.total strong{font-size:24px;font-weight:600;letter-spacing:-.02em}
+.split{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.sum{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px 20px;display:flex;flex-direction:column;gap:4px}
+.sum.dark{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.sum .k{font-size:13px;color:var(--fg-60)}
+.sum.dark .k{color:rgba(250,250,250,.7)}
+.sum .v{font-size:32px;font-weight:600;letter-spacing:-.03em;line-height:1.1;font-variant-numeric:tabular-nums}
+.sum .v small{font-size:15px;font-weight:500;margin-left:4px;opacity:.7;letter-spacing:0}
+.sum .s{font-size:12px;color:var(--fg-60)}
+.sum.dark .s{color:rgba(250,250,250,.6)}
+.incl{display:flex;flex-direction:column;gap:10px}
+.feat{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 20px}
+.feat li{display:flex;gap:8px;align-items:flex-start;font-size:14px;line-height:1.4;min-width:0}
+.feat svg{flex:none;width:16px;height:16px;margin-top:1px}
+.cta{display:block;text-align:center;text-decoration:none;font:inherit;border:0;cursor:pointer;background:var(--fg);color:var(--bg);border-radius:999px;padding:16px 28px;font-size:16px;font-weight:500;min-height:54px;transition:opacity .15s}
+.cta:hover{opacity:.88}
+.cta:focus-visible{outline:2px solid var(--fg);outline-offset:3px}
+.fine{margin:0;text-align:center;font-size:13px;color:var(--fg-40)}
+
+/* Fenêtre texto (ordinateur) */
+.modal{position:fixed;inset:0;background:rgba(10,10,10,.45);display:flex;align-items:center;justify-content:center;padding:16px;z-index:10}
+.sheet{position:relative;background:var(--white);border:1px solid var(--border);border-radius:20px;padding:32px 28px 24px;width:100%;max-width:420px;max-height:100%;overflow:auto;display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px}
+.sheet h2{margin:0;font-size:24px;font-weight:600;letter-spacing:-.02em}
+.m-sub{margin:0;font-size:14px;color:var(--fg-60);max-width:34ch}
+.qr{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:14px;line-height:0}
+.qr img,.qr canvas{display:block;width:200px;height:200px}
+.msg{background:var(--card);border-radius:14px 14px 14px 4px;padding:12px 14px;font-size:14px;text-align:left;align-self:stretch}
+.m-foot{display:flex;flex-direction:column;gap:10px;align-items:center;font-size:14px;color:var(--fg-60)}
+.m-foot strong{color:var(--fg);font-weight:500;user-select:all}
+.m-link{color:var(--fg);font-weight:500;text-decoration:underline;text-underline-offset:3px}
+.close{position:absolute;top:12px;right:12px;width:40px;height:40px;border:0;background:transparent;border-radius:999px;cursor:pointer;color:var(--fg-60);display:flex;align-items:center;justify-content:center}
+.close:hover{background:var(--fg-05)}
+.close svg{width:16px;height:16px}
+
+footer{text-align:center;font-size:12px;color:var(--fg-40)}
+
+@media (max-width:640px){
+  .wrap{padding-inline:16px;padding-block:28px 48px}
+  .step{padding:20px 18px}
+  .step-head{flex-wrap:wrap}
+  .step-head .val{order:3;flex-basis:100%;margin-left:44px}
+  .quote{padding:22px 18px}
+  .split{grid-template-columns:minmax(0,1fr)}
+  .feat{grid-template-columns:minmax(0,1fr)}
+  .q-meta{text-align:left}
+  .ticks{padding:0 9px}
+}
+@media (prefers-reduced-motion:reduce){.quote{animation:none}.range::-webkit-slider-thumb{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><img alt="OLA" src="data:image/webp;base64,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"></div>
+
+  <section class="hero">
+    <span class="pill-tag"><i></i>Tarifs OLA</span>
+    <h1>Bâtissons votre forfait.<span>Deux questions, vos prix.</span></h1>
+    <p class="lede">Sans contrat. Annulable en tout temps.</p>
+  </section>
+
+  <!-- 1. Courtiers -->
+  <section class="step" aria-labelledby="q1">
+    <div class="step-head">
+      <span class="num">1</span>
+      <div><h2 id="q1">Combien de courtiers dans l'équipe?</h2><p>Incluez chaque courtier qui utilisera OLA.</p></div>
+      <div class="val" id="seats-val">1<small>courtier</small></div>
+    </div>
+    <div>
+      <input type="range" class="range" id="range" min="1" max="10" step="0.01" value="1" aria-labelledby="q1">
+      <div class="ticks" id="ticks"></div>
+    </div>
+  </section>
+
+  <!-- 2. Numéros -->
+  <section class="step" aria-labelledby="q2">
+    <div class="step-head">
+      <span class="num">2</span>
+      <div><h2 id="q2">Combien de numéros de téléphone?</h2><p>Un numéro par courtier, ou un seul partagé par l'équipe.</p></div>
+    </div>
+    <div class="stepper">
+      <div class="counter-box">
+        <button type="button" id="minus" aria-label="Un numéro de moins">−</button>
+        <output id="lines" aria-live="polite">1</output>
+        <button type="button" id="plus" aria-label="Un numéro de plus">+</button>
+      </div>
+      <p id="lines-note">1,15 $ par numéro + SMS et appels selon l'utilisation (environ 10 $ par mois par numéro).</p>
+    </div>
+  </section>
+
+  <button type="button" class="go" id="go">Voir mon forfait
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3v10M3.5 8.5L8 13l4.5-4.5"/></svg>
+  </button>
+
+  <!-- Génération du forfait -->
+  <section class="gen" id="gen" hidden aria-live="polite">
+    <div class="spin" aria-hidden="true"></div>
+    <p class="gen-title">Préparation de votre forfait</p>
+    <ul class="gen-steps" id="gen-steps"></ul>
+    <div class="bar-track" aria-hidden="true"><div class="bar-fill" id="gen-fill"></div></div>
+  </section>
+
+  <!-- Forfait détaillé -->
+  <section class="quote" id="quote" hidden aria-labelledby="q-title">
+    <div class="q-head">
+      <div>
+        <span class="pill-tag"><i></i>Votre forfait sur mesure</span>
+        <h2 id="q-title">Votre forfait OLA</h2>
+      </div>
+      <div class="q-meta"><div id="q-date"></div><div id="q-sum"></div></div>
+    </div>
+
+    <div>
+      <p class="q-label">Mensuel</p>
+      <div class="lines">
+        <div class="line"><span>Plateforme OLA<em id="l-plat-d">1 courtier</em></span><strong id="l-plat">200 $</strong></div>
+        <div class="line"><span>Numéros de téléphone<em id="l-num-d">1 × 1,15 $</em></span><strong id="l-num">1,15 $</strong></div>
+        <div class="line"><span>Utilisation téléphonie<em>SMS et appels, estimation selon l'utilisation</em></span><strong id="l-use">≈ 10 $</strong></div>
+        <div class="line total"><span>Total mensuel estimé</span><strong id="l-total">≈ 211 $ / mois</strong></div>
+      </div>
+    </div>
+
+    <div class="split">
+      <div class="sum">
+        <span class="k">Pour démarrer (une seule fois)</span>
+        <span class="v" id="s-setup">1 500 $</span>
+        <span class="s">Installation, onboarding et premier mois inclus</span>
+      </div>
+      <div class="sum dark">
+        <span class="k">À partir du 2<sup>e</sup> mois</span>
+        <span class="v" id="s-month">≈ 211 $<small>/ mois</small></span>
+        <span class="s">Sans contrat, annulable en tout temps</span>
+      </div>
+    </div>
+
+    <div class="incl">
+      <p class="q-label">Inclus dans la plateforme</p>
+      <ul class="feat" id="feat"></ul>
+    </div>
+
+    <a class="cta" id="cta" href="sms:+15814021672">Réserver mon installation</a>
+    <p class="fine">Prix en dollars canadiens, taxes en sus.</p>
+  </section>
+
+  <footer>OLA · CRM et automatisation pour courtiers immobiliers du Québec</footer>
+</div>
+
+<div class="modal" id="modal" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="m-title">
+    <button type="button" class="close" id="m-close" aria-label="Fermer">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg>
+    </button>
+    <span class="pill-tag"><i></i><span id="m-plan">Votre forfait</span></span>
+    <h2 id="m-title">Écrivez-nous de votre cellulaire</h2>
+    <p class="m-sub">Scannez le code avec l'appareil photo de votre cellulaire. Le message est déjà écrit, il reste à appuyer sur Envoyer.</p>
+    <div class="qr" id="qr" aria-label="Code QR pour envoyer un texto à OLA"></div>
+    <div class="msg" id="m-msg"></div>
+    <div class="m-foot">
+      <span>Ou textez le <strong>581-402-1672</strong></span>
+      <a class="m-link" id="m-sms" href="sms:+15814021672">Ouvrir dans Messages</a>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+/* ===== Modifie les prix ici ===== */
+const CONFIG = {
+  maxBrokers: 10,
+  monthlyFor: n => 200 + 100 * (n - 1),               // 1 = 200 $, 2 = 300 $, 3 = 400 $...
+  setupFor:   n => n === 1 ? 1500 : 1000 * (n + 1),   // 1 = 1 500 $, 2 = 3 000 $, 3 = 4 000 $...
+  phoneNumber: 1.15,        // $ par mois, par numéro
+  phoneUsageEstimate: 10,   // $ par mois, par numéro (estimation SMS + appels)
+  maxLines: 10,
+  features: [
+    "Portail client pour chaque transaction",
+    "Demandes d'infos Centris automatisées",
+    "Mes inscriptions",
+    "Délais des conditions et rappels",
+    "Confirmation de visites",
+    "Relances automatiques",
+    "App mobile",
+    "Support et base de connaissances"
+  ],
+  smsNumber: "+15814021672",
+  smsMessage: s => `Salut! J'aimerais commencer le processus d'embarquement avec OLA (${s}). Quelles sont les prochaines étapes?`
+};
+/* ================================ */
+
+const $ = id => document.getElementById(id);
+const fmt = n => n.toLocaleString("fr-CA", { minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits: 2 }).replace(/[  ]/g," ") + " $";
+const plural = (n, w) => `${n} ${w}${n > 1 ? "s" : ""}`;
+const tick = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"/></svg>';
+
+const state = { brokers: 1, lines: 1, shown: false };
+
+// Animation des montants
+const last = {};
+function tween(id, to, draw, dur = 280){
+  const from = last[id] ?? to; last[id] = to;
+  const el = $(id), t0 = performance.now();
+  cancelAnimationFrame(el._raf);
+  if (from === to || matchMedia("(prefers-reduced-motion: reduce)").matches) { draw(el, to); return; }
+  const step = t => { const k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+    draw(el, from + (to - from) * e); if (k < 1) el._raf = requestAnimationFrame(step); };
+  el._raf = requestAnimationFrame(step);
+}
+const r2 = v => Math.round(v * 100) / 100;
+
+// 1. Curseur
+const range = $("range");
+range.max = CONFIG.maxBrokers;
+$("ticks").innerHTML = Array.from({length:CONFIG.maxBrokers},(_,k)=>`<button type="button" data-n="${k+1}" aria-label="${plural(k+1,"courtier")}">${k+1}</button>`).join("");
+let dragging = false;
+const setFill = v => range.style.setProperty("--pct", ((v - 1) / (CONFIG.maxBrokers - 1) * 100) + "%");
+function snap(){
+  dragging = false;
+  const from = +range.value, to = state.brokers, t0 = performance.now();
+  if (Math.abs(from - to) < 0.001) return;
+  const step = t => { const k = Math.min(1, (t - t0) / 160), e = 1 - Math.pow(1 - k, 3), v = from + (to - from) * e;
+    range.value = v; setFill(v); if (k < 1 && !dragging) requestAnimationFrame(step); };
+  requestAnimationFrame(step);
+}
+function setBrokers(n){ state.brokers = Math.min(CONFIG.maxBrokers, Math.max(1, n|0)); render(); }
+range.addEventListener("pointerdown", () => { dragging = true; });
+range.addEventListener("input", () => {
+  const v = +range.value; setFill(v);
+  const n = Math.round(v);
+  if (n !== state.brokers) { state.brokers = n; render(); try { navigator.vibrate && navigator.vibrate(8); } catch(e) {} }
+});
+["change","pointerup","pointercancel"].forEach(ev => range.addEventListener(ev, snap));
+range.addEventListener("keydown", e => {
+  const d = { ArrowRight:1, ArrowUp:1, ArrowLeft:-1, ArrowDown:-1 }[e.key];
+  if (d) { e.preventDefault(); setBrokers(state.brokers + d); }
+});
+$("ticks").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return;
+  state.brokers = +b.dataset.n; dragging = true; render(); snap(); });
+
+// 2. Numéros
+$("minus").addEventListener("click", () => { state.lines = Math.max(1, state.lines - 1); render(); });
+$("plus").addEventListener("click", () => { state.lines = Math.min(CONFIG.maxLines, state.lines + 1); render(); });
+
+$("feat").innerHTML = CONFIG.features.map(f => `<li>${tick}<span>${f}</span></li>`).join("");
+$("q-date").textContent = "Préparée le " + new Date().toLocaleDateString("fr-CA", { day:"numeric", month:"long", year:"numeric" });
+
+function summary(){
+  return `${plural(state.brokers,"courtier")}, ${plural(state.lines,"numéro")}`;
+}
+
+function render(dur){
+  const n = state.brokers, L = state.lines;
+  if (!dragging) { range.value = n; setFill(n); }
+  range.setAttribute("aria-valuetext", plural(n,"courtier"));
+  $("seats-val").innerHTML = `${n}<small>courtier${n>1?'s':''}</small>`;
+  document.querySelectorAll("#ticks button").forEach(b => b.setAttribute("aria-current", +b.dataset.n === n));
+  $("lines").textContent = L;
+  $("minus").disabled = L <= 1; $("plus").disabled = L >= CONFIG.maxLines;
+
+  const plat = CONFIG.monthlyFor(n), num = r2(L * CONFIG.phoneNumber), use = L * CONFIG.phoneUsageEstimate;
+  const monthly = Math.round(plat + num + use), setup = CONFIG.setupFor(n);
+
+  $("l-plat-d").textContent = plural(n,"courtier");
+  tween("l-plat", plat, (el,v) => el.textContent = fmt(Math.round(v)), dur);
+  $("l-num-d").textContent = `${L} × ${fmt(CONFIG.phoneNumber)}`;
+  tween("l-num", num, (el,v) => el.textContent = fmt(r2(v)), dur);
+  tween("l-use", use, (el,v) => el.textContent = "≈ " + fmt(Math.round(v)), dur);
+  tween("l-total", monthly, (el,v) => el.textContent = `≈ ${fmt(Math.round(v))} / mois`, dur);
+  tween("s-month", monthly, (el,v) => el.innerHTML = `≈ ${fmt(Math.round(v))}<small>/ mois</small>`, dur);
+  tween("s-setup", setup, (el,v) => el.textContent = fmt(Math.round(v)), dur);
+  $("q-sum").textContent = summary();
+  $("cta").href = smsUri();
+  try { history.replaceState(null, "", `#${n}-${L}`); } catch(e) {}
+}
+
+const smooth = () => matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
+let generating = false;
+$("go").addEventListener("click", () => {
+  const q = $("quote");
+  if (!q.hidden) { q.scrollIntoView({ behavior: smooth(), block: "start" }); return; }
+  if (generating) return;
+  generating = true;
+  const steps = [
+    `Plateforme pour ${plural(state.brokers, "courtier")}`,
+    `${plural(state.lines, "numéro")} de téléphone`,
+    "Calcul de vos prix"
+  ];
+  $("gen-steps").innerHTML = steps.map(x => `<li><span class="dotk">${tick}</span>${x}</li>`).join("");
+  const items = $("gen-steps").children, gen = $("gen"), fill = $("gen-fill");
+  fill.style.width = "0";
+  $("go").hidden = true; gen.hidden = false;
+  gen.scrollIntoView({ behavior: smooth(), block: "center" });
+  const total = 2400, per = total / steps.length;
+  steps.forEach((_, i) => {
+    setTimeout(() => { items[i].classList.add("on"); fill.style.width = ((i + 1) / steps.length * 100) + "%"; }, i * per);
+    setTimeout(() => { items[i].classList.replace("on", "done"); }, (i + 1) * per - 120);
+  });
+  setTimeout(() => {
+    gen.hidden = true; q.hidden = false; state.shown = true; generating = false;
+    $("go").hidden = false; $("go").firstChild.textContent = "Voir mon forfait à jour ";
+    // Les prix partent de zéro et montent jusqu'au total
+    ["l-plat","l-num","l-use","l-total","s-month","s-setup"].forEach(id => { last[id] = 0; });
+    render(900);
+    ["s-month","s-setup"].forEach(id => { const el = $(id); el.classList.remove("pop"); void el.offsetWidth; el.classList.add("pop"); });
+    const tot = $("l-total"); tot.classList.remove("pop"); void tot.offsetWidth; tot.classList.add("pop");
+    q.scrollIntoView({ behavior: smooth(), block: "start" });
+  }, total + 150);
+});
+
+/* Réserver : sur cellulaire, ouvre Messages avec le texto déjà écrit. Sur ordinateur, code QR. */
+function smsUri(){ return `sms:${CONFIG.smsNumber}?&body=${encodeURIComponent(CONFIG.smsMessage(summary()))}`; }
+const isDesktop = () => matchMedia("(hover: hover) and (pointer: fine)").matches && innerWidth > 768;
+function openModal(){
+  const msg = CONFIG.smsMessage(summary()), uri = smsUri();
+  $("m-plan").textContent = summary(); $("m-msg").textContent = msg; $("m-sms").href = uri;
+  const box = $("qr"); box.innerHTML = "";
+  if (window.QRCode) new QRCode(box, { text: uri, width: 400, height: 400, colorDark: "#0a0a0a", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.M });
+  else { box.style.lineHeight = "1.4"; box.textContent = "Code QR indisponible. Textez le numéro ci-dessous."; }
+  $("modal").hidden = false; $("m-close").focus();
+}
+function closeModal(){ $("modal").hidden = true; $("cta").focus(); }
+$("cta").addEventListener("click", e => { if (isDesktop()) { e.preventDefault(); openModal(); } });
+$("m-close").addEventListener("click", closeModal);
+$("modal").addEventListener("click", e => { if (e.target === $("modal")) closeModal(); });
+document.addEventListener("keydown", e => { if (!$("modal").hidden && e.key === "Escape") closeModal(); });
+
+// Lien direct : #3-2 = 3 courtiers, 2 numéros (le forfait s'ouvre déjà). Les anciens liens #3-pro-2 marchent encore.
+(function fromHash(){
+  const h = location.hash.slice(1).toLowerCase();
+  const legacy = { solo:1, duo:2, trio:3, quatuor:4 };
+  if (legacy[h]) { state.brokers = legacy[h]; return; }
+  const parts = h.split("-"), b = parts[0], l = parts[parts.length - 1];
+  if (+b) state.brokers = Math.min(CONFIG.maxBrokers, Math.max(1, +b));
+  if (+l) state.lines = Math.min(CONFIG.maxLines, Math.max(1, +l));
+  if (parts.length > 1) { $("quote").hidden = false; $("go").firstChild.textContent = "Voir mon forfait à jour "; }
+})();
+render();
+</script>
+
+</body></html>
